@@ -9,7 +9,6 @@ const versionpkg = @import("version.zig");
 
 pub const c = @import("c.zig").c;
 pub const freetype = @import("freetype.zig");
-pub const coretext = @import("coretext.zig");
 pub const MemoryMode = blob.MemoryMode;
 pub const Blob = blob.Blob;
 pub const Buffer = buffer.Buffer;

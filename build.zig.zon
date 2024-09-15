@@ -9,7 +9,6 @@
         "build.zig.zon",
         "c.zig",
         "common.zig",
-        "coretext.zig",
         "errors.zig",
         "face.zig",
         "font.zig",
