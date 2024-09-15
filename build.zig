@@ -1,5 +1,4 @@
 const std = @import("std");
-const apple_sdk = @import("apple_sdk");
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -13,7 +12,6 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
         .@"enable-libpng" = true,
     });
-    const macos = b.dependency("macos", .{ .target = target, .optimize = optimize });
     const upstream = b.dependency("harfbuzz", .{});
 
     const module = b.addModule("harfbuzz", .{
@@ -22,7 +20,6 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
         .imports = &.{
             .{ .name = "freetype", .module = freetype.module("freetype") },
-            .{ .name = "macos", .module = macos.module("macos") },
         },
     });
 
@@ -35,11 +32,6 @@ pub fn build(b: *std.Build) !void {
     lib.linkLibCpp();
     lib.addIncludePath(upstream.path("src"));
     module.addIncludePath(upstream.path("src"));
-
-    if (target.result.isDarwin()) {
-        try apple_sdk.addPaths(b, &lib.root_module);
-        try apple_sdk.addPaths(b, module);
-    }
 
     const freetype_dep = b.dependency("freetype", .{
         .target = target,
