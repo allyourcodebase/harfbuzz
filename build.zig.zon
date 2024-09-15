@@ -1,6 +1,7 @@
 .{
     .name = "harfbuzz",
     .version = "8.4.0",
+    .minimum_zig_version = "0.13.0",
     .paths = .{
         "LICENSE",
         "blob.zig",
