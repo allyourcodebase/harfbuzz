@@ -2,7 +2,7 @@
     .name = .harfbuzz,
     .version = "12.2.0",
     .fingerprint = 0xbd60917c02559d22,
-    .minimum_zig_version = "0.15.1",
+    .minimum_zig_version = "0.15.2",
     .paths = .{
         "LICENSE",
         "blob.zig",
