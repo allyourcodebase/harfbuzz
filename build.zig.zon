@@ -2,7 +2,7 @@
     .name = .harfbuzz,
     .version = "8.5.0",
     .fingerprint = 0xbd60917c02559d22,
-    .minimum_zig_version = "0.14.0",
+    .minimum_zig_version = "0.15.1",
     .paths = .{
         "LICENSE",
         "blob.zig",
@@ -25,8 +25,8 @@
             .hash = "N-V-__8AAKwyqQWfrqa-RqyRcNr-9zdBG1SQ6v3eNremxDs3",
         },
         .freetype = .{
-            .url = "git+https://github.com/allyourcodebase/freetype#9d847affbd224cf6a7303ad6d98715e3675ef78c",
-            .hash = "freetype-2.13.3-C3-WdeyJAAD9z8BeYYQ8N3gNlPI9NvHRxg5039S5vhz7",
+            .url = "git+https://github.com/allyourcodebase/freetype#f2f3f662cfc6cf7be2d39d8373c6e6b91297ced8",
+            .hash = "freetype-2.14.1-C3-WdWqKAADgPV0BhYffbFweY71Qns18mICAEtclm1a6",
         },
     },
 }

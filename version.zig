@@ -28,7 +28,7 @@ pub fn versionAtLeast(vsn: Version) bool {
 /// Returns library version as a string with three components.
 pub fn versionString() [:0]const u8 {
     const res = c.hb_version_string();
-    return std.mem.sliceTo(res, 0);
+    return std.mem.span(res);
 }
 
 test {

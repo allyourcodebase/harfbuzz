@@ -33,7 +33,7 @@ pub fn build(b: *std.Build) !void {
             .link_libcpp = true,
         }),
     });
-    lib.addIncludePath(upstream.path("src"));
+    lib.root_module.addIncludePath(upstream.path("src"));
     module.addIncludePath(upstream.path("src"));
 
     const freetype_dep = b.dependency("freetype", .{
@@ -41,11 +41,12 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
         .@"enable-libpng" = true,
     });
-    lib.linkLibrary(freetype_dep.artifact("freetype"));
+    lib.root_module.linkLibrary(freetype_dep.artifact("freetype"));
     module.addIncludePath(freetype_dep.builder.dependency("freetype", .{}).path("include"));
 
-    var flags: std.ArrayListUnmanaged([]const u8) = .empty;
+    var flags: std.ArrayList([]const u8) = .empty;
     defer flags.deinit(b.allocator);
+
     try flags.appendSlice(b.allocator, &.{
         "-DHAVE_STDBOOL_H",
     });
@@ -67,11 +68,11 @@ pub fn build(b: *std.Build) !void {
     });
     if (coretext_enabled) {
         try flags.appendSlice(b.allocator, &.{"-DHAVE_CORETEXT=1"});
-        lib.linkFramework("CoreText");
+        lib.root_module.linkFramework("CoreText", .{});
         module.linkFramework("CoreText", .{});
     }
 
-    lib.addCSourceFile(.{
+    lib.root_module.addCSourceFile(.{
         .file = upstream.path("src/harfbuzz.cc"),
         .flags = flags.items,
     });
@@ -88,11 +89,11 @@ pub fn build(b: *std.Build) !void {
             .name = "test",
             .root_module = module,
         });
-        test_exe.linkLibrary(lib);
+        test_exe.root_module.linkLibrary(lib);
 
         var it = module.import_table.iterator();
         while (it.next()) |entry| test_exe.root_module.addImport(entry.key_ptr.*, entry.value_ptr.*);
-        test_exe.linkLibrary(freetype_dep.artifact("freetype"));
+        test_exe.root_module.linkLibrary(freetype_dep.artifact("freetype"));
         const tests_run = b.addRunArtifact(test_exe);
         const test_step = b.step("test", "Run tests");
         test_step.dependOn(&tests_run.step);
