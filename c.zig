@@ -1,7 +1,7 @@
-const builtin = @import("builtin");
+const config = @import("config");
 
 pub const c = @cImport({
     @cInclude("hb.h");
     @cInclude("hb-ft.h");
-    if (builtin.os.tag == .macos) @cInclude("hb-coretext.h");
+    if (config.coretext) @cInclude("hb-coretext.h");
 });

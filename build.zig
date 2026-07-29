@@ -14,12 +14,18 @@ pub fn build(b: *std.Build) !void {
     });
     const upstream = b.dependency("harfbuzz", .{});
 
+    // The bindings' @cImport has to agree with the backends this build
+    // actually compiles in, so the build options reach c.zig as a module.
+    const config = b.addOptions();
+    config.addOption(bool, "coretext", coretext_enabled);
+
     const module = b.addModule("harfbuzz", .{
         .root_source_file = b.path("main.zig"),
         .target = target,
         .optimize = optimize,
         .imports = &.{
             .{ .name = "freetype", .module = freetype.module("freetype") },
+            .{ .name = "config", .module = config.createModule() },
         },
     });
 
