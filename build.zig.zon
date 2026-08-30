@@ -1,6 +1,6 @@
 .{
     .name = .harfbuzz,
-    .version = "14.1.0",
+    .version = "14.4.0",
     .fingerprint = 0xbd60917c02559d22,
     .minimum_zig_version = "0.15.2",
     .paths = .{
@@ -10,8 +10,8 @@
     },
     .dependencies = .{
         .harfbuzz = .{
-            .url = "https://github.com/harfbuzz/harfbuzz/archive/refs/tags/14.1.0.tar.gz",
-            .hash = "N-V-__8AAJ5J4QV1Qw46kP_V9eNRdRVk9Cp65YNLuECHurpK",
+            .url = "git+https://github.com/harfbuzz/harfbuzz.git?ref=14.4.0#36cb489cb02ce4b92099669ba9f9bea348eff93f",
+            .hash = "N-V-__8AAAJ_FwYXbjMIdM8T_4Z402GcERnA3uFfjFDuQP4c",
         },
         .freetype = .{
             .url = "git+https://github.com/allyourcodebase/freetype#884fd2235e6ae1ec4306eda30b3259f20930ed2e",
