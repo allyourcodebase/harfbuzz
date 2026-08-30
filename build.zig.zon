@@ -5,19 +5,8 @@
     .minimum_zig_version = "0.15.2",
     .paths = .{
         "LICENSE",
-        "blob.zig",
-        "buffer.zig",
         "build.zig",
         "build.zig.zon",
-        "c.zig",
-        "common.zig",
-        "errors.zig",
-        "face.zig",
-        "font.zig",
-        "freetype.zig",
-        "main.zig",
-        "shape.zig",
-        "version.zig",
     },
     .dependencies = .{
         .harfbuzz = .{

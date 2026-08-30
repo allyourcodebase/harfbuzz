@@ -7,21 +7,7 @@ pub fn build(b: *std.Build) !void {
     const coretext_enabled = b.option(bool, "enable-coretext", "Build coretext") orelse false;
     const freetype_enabled = b.option(bool, "enable-freetype", "Build freetype") orelse true;
 
-    const freetype = b.dependency("freetype", .{
-        .target = target,
-        .optimize = optimize,
-        .@"enable-libpng" = true,
-    });
     const upstream = b.dependency("harfbuzz", .{});
-
-    const module = b.addModule("harfbuzz", .{
-        .root_source_file = b.path("main.zig"),
-        .target = target,
-        .optimize = optimize,
-        .imports = &.{
-            .{ .name = "freetype", .module = freetype.module("freetype") },
-        },
-    });
 
     const lib = b.addLibrary(.{
         .name = "harfbuzz",
@@ -34,7 +20,6 @@ pub fn build(b: *std.Build) !void {
         }),
     });
     lib.root_module.addIncludePath(upstream.path("src"));
-    module.addIncludePath(upstream.path("src"));
 
     const freetype_dep = b.dependency("freetype", .{
         .target = target,
@@ -42,7 +27,6 @@ pub fn build(b: *std.Build) !void {
         .@"enable-libpng" = true,
     });
     lib.root_module.linkLibrary(freetype_dep.artifact("freetype"));
-    module.addIncludePath(freetype_dep.builder.dependency("freetype", .{}).path("include"));
 
     var flags: std.ArrayList([]const u8) = .empty;
     defer flags.deinit(b.allocator);
@@ -69,7 +53,6 @@ pub fn build(b: *std.Build) !void {
     if (coretext_enabled) {
         try flags.appendSlice(b.allocator, &.{"-DHAVE_CORETEXT=1"});
         lib.root_module.linkFramework("CoreText", .{});
-        module.linkFramework("CoreText", .{});
     }
 
     lib.root_module.addCSourceFile(.{
@@ -83,19 +66,4 @@ pub fn build(b: *std.Build) !void {
     );
 
     b.installArtifact(lib);
-
-    {
-        const test_exe = b.addTest(.{
-            .name = "test",
-            .root_module = module,
-        });
-        test_exe.root_module.linkLibrary(lib);
-
-        var it = module.import_table.iterator();
-        while (it.next()) |entry| test_exe.root_module.addImport(entry.key_ptr.*, entry.value_ptr.*);
-        test_exe.root_module.linkLibrary(freetype_dep.artifact("freetype"));
-        const tests_run = b.addRunArtifact(test_exe);
-        const test_step = b.step("test", "Run tests");
-        test_step.dependOn(&tests_run.step);
-    }
 }
