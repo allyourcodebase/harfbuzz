@@ -21,13 +21,6 @@ pub fn build(b: *std.Build) !void {
     });
     lib.root_module.addIncludePath(upstream.path("src"));
 
-    const freetype_dep = b.dependency("freetype", .{
-        .target = target,
-        .optimize = optimize,
-        .@"enable-libpng" = true,
-    });
-    lib.root_module.linkLibrary(freetype_dep.artifact("freetype"));
-
     var flags: std.ArrayList([]const u8) = .empty;
     defer flags.deinit(b.allocator);
 
@@ -41,15 +34,28 @@ pub fn build(b: *std.Build) !void {
             "-DHAVE_PTHREAD=1",
         });
     }
-    if (freetype_enabled) try flags.appendSlice(b.allocator, &.{
-        "-DHAVE_FREETYPE=1",
 
-        // Let's just assume a new freetype
-        "-DHAVE_FT_GET_VAR_BLEND_COORDINATES=1",
-        "-DHAVE_FT_SET_VAR_BLEND_COORDINATES=1",
-        "-DHAVE_FT_DONE_MM_VAR=1",
-        "-DHAVE_FT_GET_TRANSFORM=1",
-    });
+    if (freetype_enabled) {
+        if (b.systemIntegrationOption("freetype", .{})) {
+            lib.root_module.linkSystemLibrary("freetype", .{});
+        } else if (b.lazyDependency("freetype", .{
+            .target = target,
+            .optimize = optimize,
+            .@"enable-libpng" = true,
+        })) |freetype_dep| {
+            lib.root_module.linkLibrary(freetype_dep.artifact("freetype"));
+        }
+        try flags.appendSlice(b.allocator, &.{
+            "-DHAVE_FREETYPE=1",
+
+            // Let's just assume a new freetype
+            "-DHAVE_FT_GET_VAR_BLEND_COORDINATES=1",
+            "-DHAVE_FT_SET_VAR_BLEND_COORDINATES=1",
+            "-DHAVE_FT_DONE_MM_VAR=1",
+            "-DHAVE_FT_GET_TRANSFORM=1",
+        });
+    }
+
     if (coretext_enabled) {
         try flags.appendSlice(b.allocator, &.{"-DHAVE_CORETEXT=1"});
         lib.root_module.linkFramework("CoreText", .{});
